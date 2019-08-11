@@ -1,10 +1,15 @@
 package com.sdacademy;
 
+import com.sdacademy.Entity.Author;
+import com.sdacademy.Entity.Book;
+import com.sdacademy.Entity.Category;
 import com.sdacademy.Entity.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+
+import java.util.concurrent.ExecutionException;
 
 /**
  * Hello world!
@@ -14,16 +19,29 @@ public class App
 {
     public static void main( String[] args )
     {
-        SessionFactory sessionFactory=new Configuration()
-                .configure()
-                .buildSessionFactory();
-        Session session = sessionFactory.openSession();
-        User user = new User("n","kowalsky",1000);
+
+         Session session=HibernateUtils.getSession();
+
+        Author author=new Author();
+        Book book=new Book();
+        Category category=new Category();
         Transaction transaction=null;
-        transaction=session.beginTransaction();
-        session.save(user);
-        transaction.commit();
-        session.close();
+        try {
+            transaction = session.beginTransaction();
+            session.save(author);
+            session.save(book);
+            session.save(category);
+            transaction.commit();
+        }catch (Exception e){
+            if(transaction!=null){
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        }finally {
+            if(session!=null)
+            session.close();
+        }
+
 
 
 
