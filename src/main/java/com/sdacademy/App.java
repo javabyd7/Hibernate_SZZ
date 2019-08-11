@@ -25,13 +25,16 @@ public class App
         Author author=new Author();
         Book book=new Book();
         Category category=new Category();
+        BookDAO bookDAO=new BookDAO();
         Transaction transaction=null;
+
         try {
             transaction = session.beginTransaction();
             session.save(author);
             session.save(book);
             session.save(category);
             transaction.commit();
+            bookDAO.insertBook(book);
         }catch (Exception e){
             if(transaction!=null){
                 transaction.rollback();
